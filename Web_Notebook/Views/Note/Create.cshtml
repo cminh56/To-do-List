@@ -1,0 +1,148 @@
+﻿@model Web_Notebook.Models.Note.NoteDTO
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <style>
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Body and Main Wrapper Styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .header h1 {
+                font-size: 24px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            .header p {
+                font-size: 14px;
+                color: #777;
+            }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+
+            .form-control:focus {
+                border-color: #3498db;
+                outline: none;
+            }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2c3e50;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+            .btn:hover {
+                background-color: white;
+            }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+        .form-control#Content {
+            min-height: 200px; /* Set a larger height for the content area */
+            resize: vertical; /* Allow resizing only in vertical direction */
+        }
+    </style>
+
+   
+</head>
+
+<body>
+    @await Html.PartialAsync("_Sidebar")
+    <div class="main-content">
+        <!-- Form Header -->
+        <div class="header">
+            <h1>Create a New Note</h1>
+
+        </div>
+
+        <!-- Create Task Form -->
+        <form method="post" asp-action="Create">
+            <input asp-for="UserId" type="hidden" />
+            @* <input asp-for="UpdatedAt" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" type="hidden" /> *@
+
+            <div class="form-group">
+                <label asp-for="Title">Task Title</label>
+                <input asp-for="Title" type="text" class="form-control" id="Title" name="Title" required />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Content">Content</label>
+                <textarea asp-for="Content" class="form-control" id="Content" name="Content"></textarea>
+            </div>
+
+
+            <button type="submit" class="btn">Create Task</button>
+        </form>
+    </div>
+</body>
+
+</html>

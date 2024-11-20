@@ -1,0 +1,59 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Web_Notebook
+build_property.RootNamespace = Web_Notebook
+build_property.ProjectDir = D:\Documents\PRN231\NoteBook_API\Web_Notebook\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\Documents\PRN231\NoteBook_API\Web_Notebook
+build_property._RazorSourceGeneratorDebug = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Account/SignUp.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxTaWduVXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Bin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmluXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Note/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTm90ZVxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Note/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTm90ZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Shared/_Sidebar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TaWRlYmFyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Task/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Task/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/Views/Task/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGFza1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Documents/PRN231/NoteBook_API/Web_Notebook/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = X1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 

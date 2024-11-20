@@ -1,0 +1,495 @@
+﻿@using Newtonsoft.Json
+@using Web_Notebook.Helpers
+@model List<Web_Notebook.Models.Task.TaskDTO>
+@{
+    // Retrieve notifications from session
+    var notifications = Context.Session.GetObjectFromJson<List<Web_Notebook.Models.Notification>>("Notifications") ?? new List<Web_Notebook.Models.Notification>();
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <style>
+        /* Main Content Styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            background-color: #ecf0f1;
+            padding: 30px;
+        }
+
+        .task-list {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+            .task-list h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+        .task-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .task-list-header h2 {
+                font-size: 24px;
+                margin: 0;
+            }
+        /* Filter Form Styles */
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            margin-left: 20px;
+        }
+
+            .filter-section input,
+            .filter-section select {
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 14px;
+                width: 100%;
+                max-width: 200px;
+            }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            table th,
+            table td {
+                padding: 12px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+
+            table th {
+                background-color: #2c3e50;
+                color: white;
+            }
+
+            table tbody tr:hover {
+                background-color: #f1f1f1;
+            }
+
+        .task button {
+            background-color: #16a085;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+            .task button:hover {
+                background-color: #12876f;
+            }
+
+        .btn-primary {
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+            .btn-primary:hover {
+                background-color: #2c3e50;
+            }
+
+        .task-list button.delete {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+            .task-list button.delete:hover {
+                background-color: #c0392b;
+            }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <!-- Thêm Bootstrap CDN vào trong phần <head> -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    @await Html.PartialAsync("_Sidebar")
+    <div class="main-content">
+        <div class="task-list">
+            <div class="task-list-header">
+                <h2>Task List</h2>
+                @* <input type="file" id="fileInput" accept=".xlsx" style="display: none;" onchange="importTasks(event)"> *@
+               @*  <button onclick="document.getElementById('fileInput').click()" class="btn-primary">
+                    <i class="fa fa-download" style="margin-right: 5px;"></i>Import
+                </button>
+
+
+                <button onclick="exportTasks()" class="btn-primary">
+                    <i class="fa fa-upload" style="margin-right: 5px;"></i>Export
+                </button> *@
+                <button id="notificationButton" class="btn btn-primary" onclick="showNotifications()">Show Notifications</button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <ul id="notificationList">
+                                    <!-- Notifications will be added here -->
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    function showNotifications() {
+                        // Retrieve notifications from the Razor variable
+                        var notifications = @Html.Raw(JsonConvert.SerializeObject(notifications));
+
+                        // Check if there are notifications and populate the modal
+                        if (notifications && notifications.length > 0) {
+                            var notificationList = document.getElementById("notificationList");
+                            notificationList.innerHTML = ""; // Clear list before adding new items
+
+                            notifications.forEach(function (notification) {
+                                var li = document.createElement("li");
+                                li.textContent = notification.Message + " (Due: " + new Date(notification.DueDate).toLocaleString() + ")";
+                                notificationList.appendChild(li);
+                            });
+
+                            // Show the modal
+                            $('#notificationModal').modal('show');
+                        }
+                    }
+                </script>
+                <a href="@Url.Action("Create", "Task")" class="btn-primary">Add Task</a>
+            </div>
+
+            <!-- Filter options -->
+            <div class="filter-section">
+                <input type="text" id="searchTitle" placeholder="Search by Title" onkeyup="filterTasks()" />
+                <select id="statusFilter" onchange="filterTasks()">
+                    <option value="">All Status</option>
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <!-- Add other statuses as needed -->
+                </select>
+                <select id="priorityFilter" onchange="filterTasks()">
+                    <option value="">All Priority</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                    <!-- Add other priorities as needed -->
+                </select>
+                <input type="date" id="startDate" onchange="filterTasks()" placeholder="Start Due Date" />
+                <input type="date" id="endDate" onchange="filterTasks()" placeholder="End Due Date" />
+                <button onclick="clearFilters()" class="btn-secondary">Clear Filters</button>
+            </div>
+
+            @if (Model != null && Model.Count > 0)
+            {
+                <table id="taskTable">
+                    <thead>
+                        <tr>
+                            <th>Task ID</th>
+                            <th>Title</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Updated At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var task in Model)
+                        {
+                            <tr>
+                                <td>@task.TaskId</td>
+                                <td class="task-title">@task.Title</td>
+                                <td class="task-due-date">@task.DueDate.Value.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td class="task-status" style="color: @(task.Status == "Not Started" ? "red" : task.Status == "In Progress" ? "#ffd500" : "green")">
+                                    @task.Status
+                                </td>
+                                <td class="task-priority" style="color: @(task.Priority == "High" ? "red" : task.Priority == "Medium" ? "#ffd500" : "green")">
+                                    @task.Priority
+                                </td>
+
+                                <td>
+                                    @if (task.UpdatedAt.HasValue)
+                                    {
+                                        @task.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Edit", "Task", new { taskId = task.TaskId })" class="btn-primary">Edit</a>
+                                    <button class="delete" onclick="deleteTask(@task.TaskId)">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No tasks available.</p>
+            }
+        </div>
+    </div>
+
+    <script>
+        function filterTasks() {
+            const searchTitle = document.getElementById('searchTitle').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            const rows = document.querySelectorAll('#taskTable tbody tr');
+            rows.forEach(row => {
+                const title = row.querySelector('.task-title').textContent.toLowerCase();
+                const status = row.querySelector('.task-status').textContent;
+                const priority = row.querySelector('.task-priority').textContent;
+                const dueDate = row.querySelector('.task-due-date').textContent;
+
+                // Check conditions
+                const matchTitle = title.includes(searchTitle);
+                const matchStatus = statusFilter === '' || status === statusFilter;
+                const matchPriority = priorityFilter === '' || priority === priorityFilter;
+                const matchDate = (!startDate || dueDate >= startDate) && (!endDate || dueDate <= endDate);
+
+                // Display row if all conditions match, else hide it
+                if (matchTitle && matchStatus && matchPriority && matchDate) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function clearFilters() {
+            // Reset all filter inputs
+            document.getElementById('searchTitle').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('priorityFilter').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+
+            // Call filterTasks to refresh the display
+            filterTasks();
+        }
+
+
+        function deleteTask(taskId) {
+            if (confirm("Are you sure you want to delete this task?")) {
+                fetch(`http://localhost:5000/api/Task/${taskId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Task deleted successfully!');
+                            location.reload();
+                        } else {
+                            alert('Failed to delete the task.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('There was an error deleting the task.');
+                    });
+            }
+        }
+
+        function exportTasks() {
+            // Get table data
+            const table = document.getElementById('taskTable');
+            const rows = table.querySelectorAll('tr');
+            let csvContent = "data:text/csv;charset=utf-8,";
+
+            // Loop through rows to create CSV content
+            rows.forEach((row, index) => {
+                const cells = row.querySelectorAll('th, td');
+                const rowData = Array.from(cells).map(cell => `"${cell.innerText}"`).join(",");
+                csvContent += index < rows.length ? rowData + "\n" : rowData;
+            });
+
+            // Encode URI and create download link
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Task_List.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        async function importTasks(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                alert("Please select a file to import.");
+                return;
+            }
+
+            // Read the file as binary string
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: "binary" });
+
+                // Assuming the first sheet contains the task data
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const tasks = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                const validStatuses = ["Not Started", "In Progress", "Completed"];
+                const validPriorities = ["High", "Medium", "Low"];
+                const currentDateTime = new Date();
+                let errors = [];  // Array to store error messages
+
+                // Helper function to parse Excel date
+                function parseExcelDate(value) {
+                    // Check if it's a date string or Excel date code
+                    if (typeof value === "number") {
+                        // Excel dates are stored as serial numbers (days since 1900-01-01)
+                        return XLSX.SSF.parse_date_code(value);
+                    } else if (typeof value === "string") {
+                        // Parse as a standard date string if possible
+                        return new Date(value);
+                    }
+                    return null;
+                }
+
+                // Validate and add each task
+                for (let i = 1; i < tasks.length; i++) { // Skip header row (index 0)
+                    const [UserId, Title, DueDate, Status, Priority, Description] = tasks[i];
+                    let rowErrors = []; // Store errors for the current row
+
+                    // Title validation (required field)
+                    if (!Title) {
+                        rowErrors.push("Title is required.");
+                    }
+
+                    // Status validation
+                    if (!validStatuses.includes(Status)) {
+                        rowErrors.push("Status must be 'Not Started', 'In Progress', or 'Completed'.");
+                    }
+
+                    // Priority validation
+                    if (!validPriorities.includes(Priority)) {
+                        rowErrors.push("Priority must be 'High', 'Medium', or 'Low'.");
+                    }
+
+                    // DueDate validation (must be in the future)
+                    let parsedDueDate = parseExcelDate(DueDate);
+                    if (parsedDueDate) {
+                        parsedDueDate = new Date(parsedDueDate); // Ensure it's a Date object
+                        if (isNaN(parsedDueDate.getTime())) {
+                            rowErrors.push("DueDate must be a valid date.");
+                        } else if (parsedDueDate <= currentDateTime) {
+                            rowErrors.push("DueDate must be a future date.");
+                        }
+                    } else {
+                        rowErrors.push("DueDate is required and must be in the future.");
+                    }
+
+                    // If there are errors, add them to the errors list for this row
+                    if (rowErrors.length > 0) {
+                        errors.push(`Row ${i + 1}: ${rowErrors.join(" ")}`);
+                        continue; // Skip sending this row to the server
+                    }
+
+                    // Prepare task data for API if validation passes
+                    const taskDTO = {
+                        UserId: 20,
+                        Title: Title,
+                        Description: Description,
+                        DueDate: parsedDueDate.toISOString(), // Send as ISO format
+                        Priority: Priority,
+                        Status: Status,
+                        UpdatedAt: new Date().toISOString(),
+                    };
+
+                    // Send task to server
+                    try {
+                        const response = await fetch('http://localhost:5000/api/Task', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(taskDTO)
+                        });
+
+                        if (!response.ok) {
+                            errors.push(`Failed to import task on row ${i + 1}: ${response.statusText}`);
+                        }
+                    } catch (error) {
+                        errors.push(`Error adding task from row ${i + 1}: ${error.message}`);
+                    }
+                }
+
+                // Show all errors in an alert after processing
+                if (errors.length > 0) {
+                    alert("Import completed with errors:\n" + errors.join("\n"));
+                } else {
+                    alert("Import process completed successfully.");
+                }
+            };
+
+            reader.readAsBinaryString(file);
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+﻿@model Web_Notebook.Models.Task.TaskDTO
+<meta charset="UTF-8">
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
+    <style>
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Body and Main Wrapper Styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            max-width: 600px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .header h1 {
+                font-size: 24px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            .header p {
+                font-size: 14px;
+                color: #777;
+            }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+
+            .form-control:focus {
+                border-color: #3498db;
+                outline: none;
+            }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2c3e50;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+            .btn:hover {
+                background-color: white;
+            }
+    </style>
+    <script>
+        function validateDueDate() {
+            const dueDateInput = document.getElementById("DueDate");
+            const dueDate = new Date(dueDateInput.value);
+            const now = new Date();
+
+            if (dueDate <= now) {
+                alert("Due Date must be in the future.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+
+<body>
+    @await Html.PartialAsync("_Sidebar")
+
+        <div class="main-content">
+            <h2>Edit Task</h2>
+        <form method="post" asp-action="Edit" onsubmit="return validateDueDate()">
+                <input asp-for="TaskId" value="@Model.TaskId" type="hidden" />
+
+                <div class="form-group">
+                    <label for="Title" class="form-label">Title</label>
+                    <input asp-for="Title" type="text" id="Title" name="Title" class="form-control" value="@Model.Title" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" id="Description" name="Description" class="form-control" >@Model.Description</textarea>
+                </div>
+
+                <div class="form-group">
+                <label for="DueDate" class="form-label">Due Date</label>
+                    <input asp-for="DueDate" type="datetime-local" id="DueDate" name="DueDate" class="form-control" value="@Model.DueDate.Value.ToString("yyyy-MM-ddTHH:mm")" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Priority" class="form-label">Priority</label>
+                    <select asp-for="Priority" id="Priority" name="Priority" class="form-control" required>
+                        <option value="High" selected="@((Model.Priority == "High") ? "selected" : "")">High</option>
+                        <option value="Medium" selected="@((Model.Priority == "Medium") ? "selected" : "")">Medium</option>
+                        <option value="Low" selected="@((Model.Priority == "Low") ? "selected" : "")">Low</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Status" class="form-label">Status</label>
+                    <select asp-for="Status" id="Status" name="Status" class="form-control" required>
+                    <option value="Not Started" selected="@((Model.Status == "Pending") ? "selected" : "")">Not Started</option>
+                        <option value="In Progress" selected="@((Model.Status == "In Progress") ? "selected" : "")">In Progress</option>
+                        <option value="Completed" selected="@((Model.Status == "Completed") ? "selected" : "")">Completed</option>
+                    </select>
+                </div>
+
+            <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+ 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

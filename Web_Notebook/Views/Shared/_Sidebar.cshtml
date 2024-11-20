@@ -1,0 +1,78 @@
+﻿@* Sidebar HTML Structure *@
+<div class="sidebar">
+    <div class="header">
+        Hi, <span id="username">Minh</span>
+    </div>
+    <div class="menu">
+        <a href="@Url.Action("Index", "Task")">Task Management</a>
+        <a href="@Url.Action("Index", "Note")">Note Management</a>
+        <a href="@Url.Action("Index", "Bin")">Bin</a>
+    </div>
+    <form action="@Url.Action("LogOut", "Account")" method="post">
+        <button type="submit" class="menu logout">Log Out</button>
+    </form>
+</div>
+
+@* Sidebar Styles *@
+<style>
+    /* Sidebar Styles */
+    .sidebar {
+        width: 15%;
+        background-color: #2c3e50;
+        color: white;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: normal;
+
+    }
+
+    .sidebar .header {
+        font-size: 22px;
+        margin-bottom: 30px;
+        font-weight: bold;
+    }
+
+    .sidebar .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .sidebar .menu a,
+    .sidebar .logout {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;  /* Ensure padding for consistency */
+        border-radius: 5px;
+        background-color: transparent;  /* No background color by default */
+        border: none;  /* Remove any border */
+    }
+
+    .sidebar .menu a:hover,
+    .sidebar .logout:hover {
+        background-color: #16a085;
+    }
+
+    .sidebar .logout {
+        background-color: transparent;  /* Default state for logout */
+        text-align: center;  /* Center text in the logout button */
+    }
+
+    .sidebar .logout:hover {
+        background-color: #e74c3c;
+    }
+
+    /* Responsive Sidebar Adjustments */
+    .media (max-width: 768px) {
+        .sidebar {
+            width: 100%;
+            height: auto;
+            padding: 10px;
+        }
+    }
+</style>
